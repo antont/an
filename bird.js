@@ -143,8 +143,8 @@ AN.Bird.prototype.update = function () {
     
     //logic - the 'begin_round' part (not fps bound, but more rare) of the soya3d original
     if (this.target === null) {
-        this.target = new THREE.Vector3();
-        //this.target = randomChoice(AN.food);
+        //this.target = new THREE.Vector3();
+        this.target = randomChoice(AN.food);
         this.lookAt(this.target);
         this.rotateY(180); //oh well.
     }
@@ -152,7 +152,7 @@ AN.Bird.prototype.update = function () {
     if (this.target != null) {
         var d = new THREE.Vector3().subVectors(this.target, this.position);
 
-        if (d.lengthSquared < 10) {
+        if (d.lengthSq() < 10) {
             this.target = null;
             console.log("BIRD logic: reached target.");
         } else {
