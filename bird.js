@@ -48,7 +48,7 @@ function createFaceWithVertexColors(facear) {
 }
 
 AN.Bird = function() {
-    var headgeom = new THREE.SphereGeometry( 1, 32, 32 );
+    var headgeom = new THREE.SphereGeometry( 1, 8, 8 );
     var headmat  = new THREE.MeshLambertMaterial( {color: 0xa0a0a0} );
     this.head = new THREE.Mesh( headgeom, headmat ); //so can grow later, in eating thing
     this.head.position.set(0.8, 0.6, 0);
