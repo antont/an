@@ -137,6 +137,7 @@ AN.Bird = function() {
 
 AN.Bird.prototype = Object.create( THREE.Mesh.prototype );
 AN.Bird.prototype.constructor = AN.Bird;
+AN.Bird.SPEED = 1.8; //0.3;
 
 AN.Bird.prototype.update = function () {
     //console.log("BIRD update");
@@ -153,10 +154,14 @@ AN.Bird.prototype.update = function () {
         var d = new THREE.Vector3().subVectors(this.target, this.position);
 
         if (d.lengthSq() < 10) {
-            this.target = null;
             console.log("BIRD logic: reached target.");
+
+            this.head.scale.multiplyScalar(1.5);
+            this.head.geometry.verticesNeedUpdate = true;
+
+            this.target = null;            
         } else {
-            this.speed = 0.3; //XXX
+            this.speed = AN.Bird.SPEED; //hrm how does this biz go nicely in js actually .. class attr equivalents i think
             d.setLength(this.speed);
             this.vel = d;
 
