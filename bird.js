@@ -156,7 +156,8 @@ AN.Bird.prototype.update = function () {
         if (d.lengthSq() < 10) {
             console.log("BIRD logic: reached target.");
 
-            this.head.scale.multiplyScalar(1.5);
+            //this.head.scale.multiplyScalar(1.5); //actually in original grows only once, and that is indeed better than this..
+            this.head.scale.set(0.15, 0.15, 0.15);
             this.head.geometry.verticesNeedUpdate = true;
 
             this.target = null;            
