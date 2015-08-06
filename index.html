@@ -64,7 +64,7 @@
 				container = document.getElementById( 'container' );
 
 				camera = new THREE.PerspectiveCamera( 20, window.innerWidth / window.innerHeight, 1, 10000 );
-				camera.position.z = 1800;
+				camera.position.z = 4000;
 
 				scene = new THREE.Scene();
 
@@ -107,37 +107,16 @@
 				mesh.position.y = - 250;
 				mesh.position.x = 400;
 				mesh.rotation.x = - Math.PI / 2;
-				scene.add( mesh );
+			        scene.add( mesh );
 
-				var faceIndices = [ 'a', 'b', 'c' ];
-
-				var color, f, p, vertexIndex,
-				    radius = 40,
-  				    geometry  = new THREE.IcosahedronGeometry( radius, 1 );
-
-   				for ( var i = 0; i < geometry.faces.length; i ++ ) {
-					f  = geometry.faces[ i ];
-
-					for( var j = 0; j < 3; j++ ) {
-						vertexIndex = f[ faceIndices[ j ] ];
-
-						p = geometry.vertices[ vertexIndex ];
-
-						color = new THREE.Color( 0xffffff );
-						color.setHSL( ( p.y / radius + 1 ) / 2, 1.0, 0.5 );
-						f.vertexColors[ j ] = color;
-					}
-				}
-
-				var materials = [
-					new THREE.MeshLambertMaterial( { color: 0xffffff, shading: THREE.FlatShading, vertexColors: THREE.VertexColors } ),
-					new THREE.MeshBasicMaterial( { color: 0x000000, shading: THREE.FlatShading, wireframe: true, transparent: true } )
-				];
-
-				group1 = THREE.SceneUtils.createMultiMaterialObject( geometry, materials );
-				group1.position.x = 0;
-				group1.rotation.x = -1.87;
-				scene.add( group1 );
+                            function add_apple(pos) {
+                                group1 = apple();
+                                group1.position.copy(pos);
+			        group1.rotation.x = -1.87;
+			        scene.add( group1 );
+                            }
+                            console.log(AN.food);
+                            AN.food.map(add_apple);
 
                                 an_bird1 = new AN.Bird();
                                 an_bird1.scale.set(150, 150, 150);
@@ -169,6 +148,36 @@
 				window.addEventListener( 'resize', onWindowResize, false );
 
 			}
+
+function apple() {
+    var faceIndices = [ 'a', 'b', 'c' ];
+
+				var color, f, p, vertexIndex,
+				    radius = 40,
+  				    geometry  = new THREE.IcosahedronGeometry( radius, 1 );
+
+   				for ( var i = 0; i < geometry.faces.length; i ++ ) {
+					f  = geometry.faces[ i ];
+
+					for( var j = 0; j < 3; j++ ) {
+						vertexIndex = f[ faceIndices[ j ] ];
+
+						p = geometry.vertices[ vertexIndex ];
+
+						color = new THREE.Color( 0xffffff );
+						color.setHSL( ( p.y / radius + 1 ) / 2, 1.0, 0.5 );
+						f.vertexColors[ j ] = color;
+					}
+				}
+
+				var materials = [
+					new THREE.MeshLambertMaterial( { color: 0xffffff, shading: THREE.FlatShading, vertexColors: THREE.VertexColors } ),
+					new THREE.MeshBasicMaterial( { color: 0x000000, shading: THREE.FlatShading, wireframe: true, transparent: true } )
+				];
+
+    group1 = THREE.SceneUtils.createMultiMaterialObject( geometry, materials );
+    return group1;
+}
 
 			function onWindowResize() {
 
