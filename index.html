@@ -112,7 +112,7 @@
 
                             function add_apple(pos) {
                                 var appletype = randomChoice([AN.GrowthApple, AN.FertilizingApple]);
-                                apple = new appletype();
+                                var apple = new appletype();
                                 apple.position.copy(pos);
 			        apple.rotation.x = -1.87;
 			        scene.add( apple );
@@ -144,7 +144,7 @@
 				stats.domElement.style.top = '0px';
 				container.appendChild( stats.domElement );
 
-				document.addEventListener( 'mousemove', onDocumentMouseMove, false );
+				document.addEventListener( '§mousemove', onDocumentMouseMove, false );
 
 				//
 

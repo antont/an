@@ -12,7 +12,7 @@ AN.food = [];
 
 AN.Apple = function(material) {
     THREE.Mesh.call(this, AN.Apple.geometry, material);
-}
+};
 
 //to reuse the geom for all instances
 AN.Apple.radius = 40;
@@ -34,7 +34,7 @@ AN.Apple.setColors = function(geometry, radius) {
 	    f.vertexColors[ j ] = color;
 	}
     }
-}
+};
 AN.Apple.setColors(AN.Apple.geometry, AN.Apple.radius);
 
 AN.Apple.prototype = Object.create( THREE.Mesh.prototype );
@@ -46,9 +46,9 @@ AN.Apple.prototype.affect = function(eater) {
 //apple that grows the eater('s head, in case of Bird)
 AN.GrowthApple = function() {
     AN.Apple.call(this, AN.GrowthApple.material);
-}
+};
 AN.GrowthApple.prototype = Object.create( AN.Apple.prototype );
-AN.GrowthApple.material = new THREE.MeshLambertMaterial( { color: 0xffffff, shading: THREE.FlatShading, vertexColors: THREE.VertexColors } )
+AN.GrowthApple.material = new THREE.MeshLambertMaterial( { color: 0xffffff, shading: THREE.FlatShading, vertexColors: THREE.VertexColors } );
 AN.GrowthApple.prototype.affect = function(eater) {
     eater.grow();
 };
@@ -56,9 +56,9 @@ AN.GrowthApple.prototype.affect = function(eater) {
 //apple that fertilizes the eater / makes it pregnant, causes to have an offspring
 AN.FertilizingApple = function() {
     AN.Apple.call(this, AN.FertilizingApple.material);
-}
+};
 AN.FertilizingApple.prototype = Object.create( AN.Apple.prototype );
-AN.FertilizingApple.material = new THREE.MeshLambertMaterial( { color: 0xff00ff, shading: THREE.FlatShading, vertexColors: THREE.VertexColors } )
+AN.FertilizingApple.material = new THREE.MeshLambertMaterial( { color: 0xff00ff, shading: THREE.FlatShading, vertexColors: THREE.VertexColors } );
 AN.FertilizingApple.prototype.affect = function(eater) {
     eater.fertilize();
 };
