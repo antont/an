@@ -151,7 +151,7 @@ AN.Bird.prototype.update = function () {
             this.target.affect(this);
             this.target = null;
         } else {
-            this.speed = AN.Bird.SPEED; //hrm how does this biz go nicely in js actually .. class attr equivalents i think
+            this.speed = AN.Bird.SPEED;
             d.setLength(this.speed);
             this.vel = d;
 
