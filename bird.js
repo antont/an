@@ -1,15 +1,5 @@
 var AN = {};
 
-//hack for: self.target = random.choice(self.parent.food)
-AN.food = [
-    new THREE.Vector3( 300, 0, 0),
-    new THREE.Vector3(-300, 0, 0),
-    new THREE.Vector3(0,  300, 0),
-    new THREE.Vector3(0, -300, 0),
-    new THREE.Vector3(0, 0,  300),
-    new THREE.Vector3(0, 0, -300)
-];
-
 function randomChoice(arr) {
     return arr[Math.floor(arr.length * Math.random())];
 }
@@ -146,20 +136,16 @@ AN.Bird.prototype.update = function () {
     if (this.target === null) {
         //this.target = new THREE.Vector3();
         this.target = randomChoice(AN.food);
-        this.lookAt(this.target);
+        this.lookAt(this.target.position);
         this.rotateY(180); //oh well.
     }
 
     if (this.target != null) {
-        var d = new THREE.Vector3().subVectors(this.target, this.position);
+        var d = new THREE.Vector3().subVectors(this.target.position, this.position);
 
         if (d.lengthSq() < 10) {
             console.log("BIRD logic: reached target.");
-
-            //this.head.scale.multiplyScalar(1.5); //actually in original grows only once, and that is indeed better than this..
-            this.head.scale.set(0.15, 0.15, 0.15);
-            this.head.geometry.verticesNeedUpdate = true;
-
+            this.target.affect(this);
             this.target = null;            
         } else {
             this.speed = AN.Bird.SPEED; //hrm how does this biz go nicely in js actually .. class attr equivalents i think
@@ -189,4 +175,10 @@ AN.Bird.prototype.update = function () {
     
     this.geometry.verticesNeedUpdate = true;
 };
+
+AN.Bird.prototype.grow = function() {
+    //this.head.scale.multiplyScalar(1.5); //actually in original grows only once, and that is indeed better than this..
+    this.head.scale.set(0.15, 0.15, 0.15);
+    this.head.geometry.verticesNeedUpdate = true;
+}
 

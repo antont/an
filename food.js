@@ -1,3 +1,15 @@
+//hack for: self.target = random.choice(self.parent.food)
+var foodpositions = [
+    new THREE.Vector3( 300, 0, 0),
+    new THREE.Vector3(-300, 0, 0),
+    new THREE.Vector3(0,  300, 0),
+    new THREE.Vector3(0, -300, 0),
+    new THREE.Vector3(0, 0,  300),
+    new THREE.Vector3(0, 0, -300)
+];
+
+AN.food = [];
+
 AN.Apple = function() {
     var faceIndices = [ 'a', 'b', 'c' ];
 
@@ -26,3 +38,7 @@ AN.Apple = function() {
 
 AN.Apple.prototype = Object.create( THREE.Mesh.prototype );
 AN.Apple.prototype.constructor = AN.Apple;
+
+AN.Apple.prototype.affect = function(eater) {
+    eater.grow();
+};

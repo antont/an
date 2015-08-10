@@ -57,17 +57,6 @@
 			var windowHalfX = window.innerWidth / 2;
 			var windowHalfY = window.innerHeight / 2;
 
-//hack for: self.target = random.choice(self.parent.food)
-foodpositions = [
-    new THREE.Vector3( 300, 0, 0),
-    new THREE.Vector3(-300, 0, 0),
-    new THREE.Vector3(0,  300, 0),
-    new THREE.Vector3(0, -300, 0),
-    new THREE.Vector3(0, 0,  300),
-    new THREE.Vector3(0, 0, -300)
-];
-
-
 			init();
 			animate();
 
@@ -126,9 +115,10 @@ foodpositions = [
                                 apple.position.copy(pos);
 			        apple.rotation.x = -1.87;
 			        scene.add( apple );
+                                AN.food.push(apple); //for birds to find
                             }
-                            console.log(AN.food);
-                            AN.food.map(add_apple);
+                            console.log(foodpositions);
+                            foodpositions.map(add_apple);
 
                                 an_bird1 = new AN.Bird();
                                 an_bird1.scale.set(150, 150, 150);
