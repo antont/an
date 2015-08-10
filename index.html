@@ -111,7 +111,8 @@
 			        scene.add( mesh );
 
                             function add_apple(pos) {
-                                apple = new AN.Apple();
+                                var appletype = randomChoice([AN.GrowthApple, AN.FertilizingApple]);
+                                apple = new appletype();
                                 apple.position.copy(pos);
 			        apple.rotation.x = -1.87;
 			        scene.add( apple );

@@ -38,7 +38,24 @@ AN.Apple = function() {
 
 AN.Apple.prototype = Object.create( THREE.Mesh.prototype );
 AN.Apple.prototype.constructor = AN.Apple;
-
 AN.Apple.prototype.affect = function(eater) {
+    //abstract base, no effect here
+};
+
+//apple that grows the eater('s head, in case of Bird)
+AN.GrowthApple = function() {
+    AN.Apple.call(this);
+}
+AN.GrowthApple.prototype = Object.create( AN.Apple.prototype );
+AN.GrowthApple.prototype.affect = function(eater) {
     eater.grow();
+};
+
+//apple that fertilizes the eater / makes it pregnant, causes to have an offspring
+AN.FertilizingApple = function() {
+    AN.Apple.call(this);
+}
+AN.FertilizingApple.prototype = Object.create( AN.Apple.prototype );
+AN.FertilizingApple.prototype.affect = function(eater) {
+    eater.fertilize();
 };

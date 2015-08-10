@@ -123,6 +123,9 @@ AN.Bird = function() {
     this.wdir = -1;
     this.vel = new THREE.Vector3();
     this.target = null;
+
+    //for having offspring
+    this.fertilized = false; //'pregnant', more like mammals than birds actually but oh well
 };
 
 AN.Bird.prototype = Object.create( THREE.Mesh.prototype );
@@ -182,3 +185,6 @@ AN.Bird.prototype.grow = function() {
     this.head.geometry.verticesNeedUpdate = true;
 }
 
+AN.Bird.prototype.fertilize = function() {
+    console.log(this + " fertilized!"); //TODO
+}
