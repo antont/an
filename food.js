@@ -1,11 +1,11 @@
 //hack for: self.target = random.choice(self.parent.food)
 var foodpositions = [
     new THREE.Vector3( 300, 0, 0),
-    new THREE.Vector3(-300, 0, 0),
-    new THREE.Vector3(0,  300, 0),
-    new THREE.Vector3(0, -300, 0),
+    new THREE.Vector3(-200, 0, 0),
+    new THREE.Vector3(0,  300, 100),
+    new THREE.Vector3(0, -100, -200),
     new THREE.Vector3(0, 0,  300),
-    new THREE.Vector3(0, 0, -300)
+    new THREE.Vector3(0, 0, -400)
 ];
 
 AN.food = [];

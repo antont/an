@@ -126,6 +126,7 @@ AN.Bird = function() {
 
     //for having offspring
     this.fertilized = false; //'pregnant', more like mammals than birds actually but oh well
+    this.food = null; //list in original but in practise i think carries one only? so just single here
 };
 
 AN.Bird.prototype = Object.create( THREE.Mesh.prototype );
@@ -157,15 +158,36 @@ AN.Bird.prototype.update = function () {
     //console.log("BIRD update");
     
     //logic - the 'begin_round' part (not fps bound, but could be more rare) of the soya3d original
-    this.targetFood();
-    if (this.target != null) {
-        if (this.setTowardsTarget()) {
-            console.log("BIRD logic: reached target.");
-            this.target.affect(this);
-            this.target = null;
+    if (this.food) {
+        if (this.fertilized) {
+            //can go breed
+            console.log("+");
+            if (this.target === null) {
+                console.log("_");
+                this.target = new THREE.Object3D();
+                this.target.position.set(
+                    (Math.random() - 0.5) * 3,
+                    -500, 0);
+            }
+            if (this.setTowardsTarget()) {
+                console.log("BREED!");
+            }
+        } else {
+            this.food.affect(this);
+            this.food = null;
+        }
+    } else {
+        this.targetFood();
+        if (this.target != null) {
+            if (this.setTowardsTarget()) {
+                console.log("BIRD logic: reached target.");
+                this.food = this.target; //now grabs the food first, no immediate eat
+                scene.remove(this.target);
+                this.target = null;
+            }
         }
     }
-
+    
     this.animate(); //could have different fps but same for both logic & anim now
 }
 
