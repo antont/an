@@ -132,34 +132,44 @@ AN.Bird.prototype = Object.create( THREE.Mesh.prototype );
 AN.Bird.prototype.constructor = AN.Bird;
 AN.Bird.SPEED = 1.8; //0.3;
 
+AN.Bird.prototype.targetFood = function () { //begin_turn of HungryBird in bird.py
+    if (this.target === null) {
+        //this.target = new THREE.Vector3();
+        this.target = randomChoice(AN.food); //XXX TODO: food doesn't disappear yet, must fix when do that
+        this.lookAt(this.target.position);
+        this.rotateY(180); //oh well.
+    }        
+}
+
+AN.Bird.prototype.setTowardsTarget = function() {
+    var d = new THREE.Vector3().subVectors(this.target.position, this.position);
+    if (d.lengthSq() < 10) {
+        return true; //reached this target now already
+    } else {
+        this.speed = AN.Bird.SPEED;
+        d.setLength(this.speed);
+        this.vel = d;
+        return false; //not there yet
+    }
+}
+
 AN.Bird.prototype.update = function () {
     //console.log("BIRD update");
     
-    //logic - the 'begin_round' part (not fps bound, but more rare) of the soya3d original
-    if (this.target === null) {
-        //this.target = new THREE.Vector3();
-        this.target = randomChoice(AN.food);
-        this.lookAt(this.target.position);
-        this.rotateY(180); //oh well.
-    }
-
+    //logic - the 'begin_round' part (not fps bound, but could be more rare) of the soya3d original
+    this.targetFood();
     if (this.target != null) {
-        var d = new THREE.Vector3().subVectors(this.target.position, this.position);
-
-        if (d.lengthSq() < 10) {
+        if (this.setTowardsTarget()) {
             console.log("BIRD logic: reached target.");
             this.target.affect(this);
             this.target = null;
-        } else {
-            this.speed = AN.Bird.SPEED;
-            d.setLength(this.speed);
-            this.vel = d;
-
-            //just testing here too
-            //this.lookAt(this.target);
         }
     }
 
+    this.animate(); //could have different fps but same for both logic & anim now
+}
+
+AN.Bird.prototype.animate = function() {
     //the soya3d advance_time part, i.e. animation code:
     
     //movement
@@ -186,5 +196,6 @@ AN.Bird.prototype.grow = function() {
 };
 
 AN.Bird.prototype.fertilize = function() {
-    console.log(this + " fertilized!"); //TODO
+    console.log(this + " fertilized!");
+    this.fertilized = true;
 };
