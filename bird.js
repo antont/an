@@ -126,7 +126,7 @@ AN.Bird = function() {
 
     //for having offspring
     this.fertilized = false; //'pregnant', more like mammals than birds actually but oh well
-    this.food = null; //list in original but in practise i think carries one only? so just single here
+    this.food = null; //list in original but in practice i think carries one only? so just single here
 };
 
 AN.Bird.prototype = Object.create( THREE.Mesh.prototype );
