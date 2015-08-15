@@ -137,9 +137,8 @@ AN.Bird.prototype.targetFood = function () { //begin_turn of HungryBird in bird.
     if (this.target === null) {
         //this.target = new THREE.Vector3();
         this.target = randomChoice(AN.food); //XXX TODO: food doesn't disappear yet, must fix when do that
-        this.lookAt(this.target.position);
-        this.rotateY(180); //oh well.
-    }        
+    }
+    //TODO: add logic for disappearing food - others may get the target before this makes it, see bird.py
 }
 
 AN.Bird.prototype.setTowardsTarget = function() {
@@ -148,8 +147,13 @@ AN.Bird.prototype.setTowardsTarget = function() {
         return true; //reached this target now already
     } else {
         this.speed = AN.Bird.SPEED;
+
         d.setLength(this.speed);
         this.vel = d;
+
+        this.lookAt(this.target.position);
+        this.rotateY(180); //oh well.
+
         return false; //not there yet
     }
 }
@@ -166,11 +170,12 @@ AN.Bird.prototype.update = function () {
                 console.log("_");
                 this.target = new THREE.Object3D();
                 this.target.position.set(
-                    (Math.random() - 0.5) * 3,
+                    (Math.random() - 0.5) * 1000,
                     -500, 0);
             }
             if (this.setTowardsTarget()) {
-                console.log("BREED!");
+                var chick = this.breed();
+                this.target = null;
             }
         } else {
             this.food.affect(this);
@@ -221,3 +226,20 @@ AN.Bird.prototype.fertilize = function() {
     console.log(this + " fertilized!");
     this.fertilized = true;
 };
+
+AN.Bird.prototype.breed = function() {
+    //now can do alone - for simplicity sake now(?)
+    console.log("BREED!");
+    if (this.food) {
+        var o = new this.constructor();
+        scene.add(o);
+        o.position.copy(this.position);
+        o.scale.set(this.scale.x / 2,
+                    this.scale.y / 2,
+                    this.scale.z / 2);
+        this.food = null;
+        return o;
+    } else {
+        return false;
+    }
+}
