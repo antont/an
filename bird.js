@@ -38,6 +38,9 @@ function createFaceWithVertexColors(facear) {
 }
 
 AN.Bird = function() {
+    //maturity defaults to adult -- is given 0 when breeding to have the helpless hungry offspring
+    var maturity = arguments.length <= 0 || arguments[0] === undefined ? 1 : arguments[0];
+
     var headgeom = new THREE.SphereGeometry( 1, 8, 8 );
     var headmat  = new THREE.MeshLambertMaterial( {color: 0xa0a0a0} );
     this.head = new THREE.Mesh( headgeom, headmat ); //so can grow later, in eating thing
@@ -127,6 +130,8 @@ AN.Bird = function() {
     //for having offspring
     this.fertilized = false; //'pregnant', more like mammals than birds actually but oh well
     this.food = null; //list in original but in practice i think carries one only? so just single here
+    this.offspring = null; //also list in original, following parent biz in human.py, but single ob here now
+    this.maturity = maturity;
 };
 
 AN.Bird.prototype = Object.create( THREE.Mesh.prototype );
@@ -159,40 +164,66 @@ AN.Bird.prototype.setTowardsTarget = function() {
 }
 
 AN.Bird.prototype.update = function () {
-    //console.log("BIRD update");
-    
     //logic - the 'begin_round' part (not fps bound, but could be more rare) of the soya3d original
-    if (this.food) {
-        if (this.fertilized) {
-            //can go breed
-            console.log("+");
-            if (this.target === null) {
-                console.log("_");
-                this.target = new THREE.Object3D();
-                this.target.position.set(
-                    (Math.random() - 0.5) * 1000,
-                    -500, 0);
-            }
-            if (this.setTowardsTarget()) {
-                var chick = this.breed();
-                this.target = null;
+
+    if (this.maturity > 0) {
+        if (this.food) {
+            if (this.offspring) {
+                var o = this.offspring;
+                if (o.maturity == 0) {
+                    if (o.food === null) {
+                        if (this.target !== o) {
+                            this.target = o;
+                            console.log("BreedingBird: going to feed a baby", this.target);
+                        }
+                        if (this.setTowardsTarget()) {
+                            o.food = this.food;
+                            this.food = null;
+                            console.log(".. baby bird fed");
+                            this.target = null;
+                        }
+                    }
+                } else { //mature ones can do well on their own (for now)
+                    this.offspring = null; //pretty extreme: just forget grown children
+                }
+            } else if (this.fertilized) {
+                //can go breed
+                //console.log("+");
+                if (this.target === null) {
+                    console.log("_");
+                    this.target = new THREE.Object3D();
+                    this.target.position.set(
+                        (Math.random() - 0.5) * 1000,
+                            -500, 0);
+                }
+                if (this.setTowardsTarget()) {
+                    var chick = this.breed();
+                    birds.push(chick); //for index.html animate() to call update -- move to some World thing later
+                    this.target = null;
+                }
+            } else {
+                this.food.affect(this);
+                this.food = null;
             }
         } else {
-            this.food.affect(this);
-            this.food = null;
-        }
-    } else {
-        this.targetFood();
-        if (this.target != null) {
-            if (this.setTowardsTarget()) {
-                console.log("BIRD logic: reached target.");
-                this.food = this.target; //now grabs the food first, no immediate eat
-                scene.remove(this.target);
-                this.target = null;
+            this.targetFood();
+            if (this.target !== null) {
+                if (this.setTowardsTarget()) {
+                    console.log("BIRD logic: reached target.");
+                    this.food = this.target; //now grabs the food first, no immediate eat
+                    scene.remove(this.target);
+                    this.target = null;
+                }
             }
         }
+    } else {
+        if (this.food) {
+            this.maturity += 1;
+            this.scale.set(150, 150, 150);
+            this.food = null;
+            console.log("chick had food and grew up"); //apparently no special effects from foods to kids..
+        }
     }
-    
     this.animate(); //could have different fps but same for both logic & anim now
 }
 
@@ -231,13 +262,15 @@ AN.Bird.prototype.breed = function() {
     //now can do alone - for simplicity sake now(?)
     console.log("BREED!");
     if (this.food) {
-        var o = new this.constructor();
+        var o = new this.constructor(0); //maturity 0, needs feeding before can fly
         scene.add(o);
         o.position.copy(this.position);
         o.scale.set(this.scale.x / 2,
                     this.scale.y / 2,
                     this.scale.z / 2);
         this.food = null;
+        this.offspring = o; //should never override little children as they are fed first before breed more
+        this.fertilized = false;
         return o;
     } else {
         return false;

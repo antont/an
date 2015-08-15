@@ -68,7 +68,8 @@
 				camera.position.z = 4000;
 
 				scene = new THREE.Scene();
-
+                birds = [];
+                
 				light = new THREE.DirectionalLight( 0xffffff );
 				light.position.set( 0, 0, 1 );
 				scene.add( light );
@@ -126,12 +127,14 @@
                                 an_bird1.position.x = -500;
                                 an_bird1.rotation.y = 90;
                                 scene.add( an_bird1 );
+                                birds.push(an_bird1);
 
                                 an_bird2 = new AN.Bird();
                                 an_bird2.scale.set(150, 150, 150);
                                 an_bird2.position.x = 400;
                                 an_bird2.rotation.y = -90;
                                 scene.add( an_bird2 );
+                                birds.push(an_bird2);
 
 				renderer = new THREE.WebGLRenderer( { antialias: true } );
 				renderer.setClearColor( 0xffffff );
@@ -172,13 +175,17 @@
 			}
 
 			//
+function callUpdate(ob) {
+    ob.update();
+}
 
 			function animate() {
 
 				requestAnimationFrame( animate );
+                                birds.forEach(callUpdate);
 
-                                an_bird1.update();
-				an_bird2.update();
+                                //an_bird1.update();
+				//an_bird2.update();
 				render();
 				stats.update();
 
