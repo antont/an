@@ -122,19 +122,16 @@
                             console.log(foodpositions);
                             foodpositions.map(add_apple);
 
-                                an_bird1 = new AN.Bird();
-                                an_bird1.scale.set(150, 150, 150);
-                                an_bird1.position.x = -500;
-                                an_bird1.rotation.y = 90;
-                                scene.add( an_bird1 );
-                                birds.push(an_bird1);
-
-                                an_bird2 = new AN.Bird();
-                                an_bird2.scale.set(150, 150, 150);
-                                an_bird2.position.x = 400;
-                                an_bird2.rotation.y = -90;
-                                scene.add( an_bird2 );
-                                birds.push(an_bird2);
+                            function addBird(xpos, yrot) {
+                                var b = AN.Bird.create();
+                                b.mesh.scale.set(150, 150, 150);
+                                b.mesh.position.x = xpos;
+                                b.mesh.rotation.y = yrot;
+                                scene.add(b.mesh );
+                                birds.push(b);
+                            }
+                            an_bird1 = addBird(-500, 90);
+                            an_bird2 = addBird(400, -90);
 
 				renderer = new THREE.WebGLRenderer( { antialias: true } );
 				renderer.setClearColor( 0xffffff );
@@ -175,14 +172,24 @@
 			}
 
 			//
-function callUpdate(ob) {
-    ob.update();
+function callBirdUpdate(ob) {
+    var newstate = AN.Bird.update(
+        ob.maturity, ob.food, ob.offpsring, ob.target,
+        AN.Bird.targetFood, AN.Bird.setTowardsTarget, ob.fertilized, AN.Bird.breed,
+        ob.mesh
+    );
+    //ES6 has assign, my chrome 44 not yet (45 will)
+    Object.keys(newstate).forEach(function(key) {
+        ob[key] = newstate[key];
+    });
+
+    ob.wdir = AN.Bird.animate(ob.mesh, ob.vel, ob.wdir, ob.tip1, ob.tip2);
 }
 
 			function animate() {
 
 				requestAnimationFrame( animate );
-                                birds.forEach(callUpdate);
+                                birds.forEach(callBirdUpdate);
 
                                 //an_bird1.update();
 				//an_bird2.update();

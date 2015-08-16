@@ -37,15 +37,17 @@ function createFaceWithVertexColors(facear) {
     return geometry;
 }
 
-AN.Bird = function() {
+AN.Bird = {}; //now just a module, a namespace for bird things
+
+AN.Bird.create = function() {
     //maturity defaults to adult -- is given 0 when breeding to have the helpless hungry offspring
     var maturity = arguments.length <= 0 || arguments[0] === undefined ? 1 : arguments[0];
 
     var headgeom = new THREE.SphereGeometry( 1, 8, 8 );
     var headmat  = new THREE.MeshLambertMaterial( {color: 0xa0a0a0} );
-    this.head = new THREE.Mesh( headgeom, headmat ); //so can grow later, in eating thing
-    this.head.position.set(0.8, 0.6, 0);
-    this.head.scale.set(0.1, 0.1, 0.1);
+    var head = new THREE.Mesh( headgeom, headmat ); //so can grow later, in eating thing
+    head.position.set(0.8, 0.6, 0);
+    head.scale.set(0.1, 0.1, 0.1);
         
     var radius = 1;
 
@@ -81,8 +83,8 @@ AN.Bird = function() {
     });
 
     //for flapping wings in update()
-    this.tip1 = geometry1.vertices[2];
-    this.tip2 = geometry1.vertices[5];
+    var tip1 = geometry1.vertices[2];
+    var tip2 = geometry1.vertices[5];
 
     //tail, is simple static quad
     /*py:       Vertex(self, -0.4,  0.0,  0.1),
@@ -107,7 +109,7 @@ AN.Bird = function() {
     var neckmat = new THREE.LineBasicMaterial({
         color: headmat.color
     });
-    neckgeom.vertices.push(this.head.position.clone());
+    neckgeom.vertices.push(head.position.clone());
     neckgeom.vertices.push(new THREE.Vector3(
         0.4, 0.0, 0.0
     ));
@@ -116,29 +118,36 @@ AN.Bird = function() {
     //geometry1.merge(neckgeom);
     //adding as a child below, like the head (but that's by design. this refactor to mesh perhaps)
 
-    THREE.Mesh.call(this, geometry1, material);
+    var mesh = new THREE.Mesh(geometry1, material);
 
-    this.add(neck);
+    mesh.add(neck);
 
     //head is not merged but separate for easy manip (grow when eats)
-    this.add(this.head); 
+    mesh.add(head);
 
-    this.wdir = -1;
-    this.vel = new THREE.Vector3();
-    this.target = null;
+    var bird = {};
+    bird.mesh = mesh;
+    bird.head = head;
+    bird.tip1 = tip1;
+    bird.tip2 = tip2;
+    bird.wdir = -1;
+    bird.vel = new THREE.Vector3();
+    bird.target = null;
 
     //for having offspring
-    this.fertilized = false; //'pregnant', more like mammals than birds actually but oh well
-    this.food = null; //list in original but in practice i think carries one only? so just single here
-    this.offspring = null; //also list in original, following parent biz in human.py, but single ob here now
-    this.maturity = maturity;
+    bird.fertilized = false; //'pregnant', more like mammals than birds actually but oh well
+    bird.food = null; //list in original but in practice i think carries one only? so just single here
+    bird.offspring = null; //also list in original, following parent biz in human.py, but single ob here now
+    bird.maturity = maturity;
+
+    //bird.update = AN.Bird.update;
+
+    return bird;
 };
 
-AN.Bird.prototype = Object.create( THREE.Mesh.prototype );
-AN.Bird.prototype.constructor = AN.Bird;
 AN.Bird.SPEED = 1.8; //0.3;
 
-AN.Bird.prototype.targetFood = function () { //begin_turn of HungryBird in bird.py
+AN.Bird.targetFood = function () { //begin_turn of HungryBird in bird.py
     if (this.target === null) {
         //this.target = new THREE.Vector3();
         this.target = randomChoice(AN.food); //XXX TODO: food doesn't disappear yet, must fix when do that
@@ -146,16 +155,16 @@ AN.Bird.prototype.targetFood = function () { //begin_turn of HungryBird in bird.
     //TODO: add logic for disappearing food - others may get the target before this makes it, see bird.py
 }
 
-AN.Bird.prototype.setTowardsTarget = function() {
-    var d = new THREE.Vector3().subVectors(this.target.position, this.position);
+AN.Bird.setTowardsTarget = function(curpos, target) {
+    var d = new THREE.Vector3().subVectors(curpos, target);
     if (d.lengthSq() < 10) {
         return true; //reached this target now already
     } else {
         this.speed = AN.Bird.SPEED;
 
         d.setLength(this.speed);
-        this.vel = d;
-
+        this.vel = d; 
+//XXX TODO GRAAH porting this in functional branch is .. well, where am at now :/
         this.lookAt(this.target.position);
         this.rotateY(180); //oh well.
 
@@ -163,102 +172,113 @@ AN.Bird.prototype.setTowardsTarget = function() {
     }
 }
 
-AN.Bird.prototype.update = function () {
+AN.Bird.update = function (maturity, food, offspring, target,
+                           targetFood, setTowardsTarget, fertilized, breed,
+                           mesh) {
     //logic - the 'begin_round' part (not fps bound, but could be more rare) of the soya3d original
 
-    if (this.maturity > 0) {
-        if (this.food) {
-            if (this.offspring) {
-                var o = this.offspring;
-                if (o.maturity == 0) {
-                    if (o.food === null) {
-                        if (this.target !== o) {
-                            this.target = o;
-                            console.log("BreedingBird: going to feed a baby", this.target);
+    if (maturity > 0) {
+        if (food) {
+            if (offspring) {
+                if (offspring.maturity == 0) {
+                    if (offspring.food === null) {
+                        if (target !== offspring) {
+                            target = offspring;
+                            console.log("BreedingBird: going to feed a baby", target);
                         }
-                        if (this.setTowardsTarget()) {
-                            o.food = this.food;
-                            this.food = null;
+                        if (setTowardsTarget()) {
+                            offspring.food = food;
+                            food = null;
                             console.log(".. baby bird fed");
-                            this.target = null;
+                            target = null;
                         }
                     }
                 } else { //mature ones can do well on their own (for now)
-                    this.offspring = null; //pretty extreme: just forget grown children
+                    offspring = null; //pretty extreme: just forget grown children
                 }
-            } else if (this.fertilized) {
+            } else if (fertilized) {
                 //can go breed
                 //console.log("+");
-                if (this.target === null) {
+                if (target === null) {
                     console.log("_");
-                    this.target = new THREE.Object3D();
-                    this.target.position.set(
+                    target = new THREE.Object3D();
+                    target.position.set(
                         (Math.random() - 0.5) * 1000,
                             -500, 0);
                 }
-                if (this.setTowardsTarget()) {
-                    var chick = this.breed();
+                if (setTowardsTarget()) {
+                    var chick = breed();
                     birds.push(chick); //for index.html animate() to call update -- move to some World thing later
-                    this.target = null;
+                    target = null;
                 }
             } else {
-                this.food.affect(this);
-                this.food = null;
+                //food.affect(this); //XXX TODO
+                food = null;
             }
         } else {
-            this.targetFood();
-            if (this.target !== null) {
-                if (this.setTowardsTarget()) {
+            targetFood();
+            if (target !== null) {
+                if (setTowardsTarget()) {
                     console.log("BIRD logic: reached target.");
-                    this.food = this.target; //now grabs the food first, no immediate eat
-                    scene.remove(this.target);
-                    this.target = null;
+                    food = target; //now grabs the food first, no immediate eat
+                    scene.remove(target);
+                    target = null;
                 }
             }
         }
     } else {
-        if (this.food) {
-            this.maturity += 1;
-            this.scale.set(150, 150, 150);
-            this.food = null;
+        if (food) {
+            maturity += 1;
+            mesh.scale.set(150, 150, 150);
+            food = null;
             console.log("chick had food and grew up"); //apparently no special effects from foods to kids..
         }
     }
-    this.animate(); //could have different fps but same for both logic & anim now
+
+    //can not create some newstate ob at start an modify as the vals are used also in more logic after mods
+    return {
+        'target': target,
+        //offspring.food,
+        'food': food,
+        'offspring': offspring,
+        //birds,
+        'maturity': maturity
+    };
 }
 
-AN.Bird.prototype.animate = function() {
+AN.Bird.animate = function(o3d, vel, wdir, tip1, tip2) {
     //the soya3d advance_time part, i.e. animation code:
     
     //movement
-    this.position.add(this.vel);
+    o3d.position.add(vel);
 
     //wing flapping. not w.r.t. movement now
-    var y = this.tip1.y;
-    y += this.wdir * 0.06 * 0.16 * 3;
+    var y = tip1.y;
+    y += wdir * 0.06 * 0.16 * 3;
     if (y < -0.6) {
-        this.wdir = 1;
+        wdir = 1;
     } else if (y > 1.1) {
-        this.wdir = -1;
+        wdir = -1;
     }
-    this.tip1.y = y;
-    this.tip2.y = y;
+    tip1.y = y;
+    tip2.y = y;
     
-    this.geometry.verticesNeedUpdate = true;
+    o3d.geometry.verticesNeedUpdate = true;
+    return wdir;
 };
 
-AN.Bird.prototype.grow = function() {
+AN.Bird.grow = function() {
     //this.head.scale.multiplyScalar(1.5); //actually in original grows only once, and that is indeed better than this..
     this.head.scale.set(0.15, 0.15, 0.15);
     this.head.geometry.verticesNeedUpdate = true;
 };
 
-AN.Bird.prototype.fertilize = function() {
+AN.Bird.fertilize = function() {
     console.log(this + " fertilized!");
     this.fertilized = true;
 };
 
-AN.Bird.prototype.breed = function() {
+AN.Bird.breed = function() {
     //now can do alone - for simplicity sake now(?)
     console.log("BREED!");
     if (this.food) {
