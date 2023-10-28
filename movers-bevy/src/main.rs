@@ -7,6 +7,7 @@ fn main() {
         .add_systems(Startup, setup)
         .add_systems(Update, sprite_movement)
         .run();
+    println!("Stop.");
 }
 
 #[derive(Component, Clone)]
