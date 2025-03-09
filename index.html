@@ -1,6 +1,12 @@
-<html>
+<html lang="fi">
     <head>
+        <meta charset="UTF-8">
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
         <style>
+            body {
+              font-family: Arial, Helvetica, sans-serif;
+            }
+
             .flex-container {
               display: flex;
               justify-content: center;
@@ -17,39 +23,54 @@
     </head>
 <body>
     <div class="flex-container">
-        <div style="width: 20%;">
+        <div style="width: 35%;">
+            <h2>Tonin Bluesky-seinä</h2>
+            <script src="at/bsky-embed.es.js" async></script>
+            <bsky-embed
+              username="an.org"
+              mode=""
+              limit="5"
+            >
+            </bsky-embed>
+        </div>
+        <!--div style="width: 35%;">
             <iframe src="https://skyview.social/embed.html?url=https://bsky.app/profile/an.org/post/3kczogshhwz2r"
             style="border: none; outline: none; width: 400px; height: 600px; background-color: white; color: black;">
             </iframe>
+        </div-->
+        <!-- bsky-embed
+          username="an.org"
+          limit="20"
+          link-target="_blank"
+          link-image="true"
+          load-more="true"
+        </bsky-embed-->
+        <div style="width: 8%; display: flex; justify-content: center; min-height: 100vh;">
+            <div style="width: 2px; background-color: #ddd; border-radius: 1px; height: auto; align-self: stretch;"></div>
         </div>
-        <div style="width: 5%;">
-        </div>
 
-        <div style="width: 50%;">
-            <center>
+        <div style="width: 47%;">
+
+        <h1 style="text-align: center;">Toni Alatalo (vihreät)</h1>
+
+        <img src="images/vaalikuva2025-crop1-small.jpg" alt="Toni Alatalo"
+          style="max-width: 100%; max-height: 400px; width: auto; object-fit: contain; display: block; margin: 0 auto;">
+
+        <h2 style="text-align: center;">Ehdolla Oulussa 2025</h2>
 
         <p>
-        after an-<a href="index-programming.html">programming</a> is
-        </p>
-
-        <h1>publish</h1>
-
-        <h2>PLAYSIGN</h2>
-        <a href="http://www.playsign.net/oulu-2040-experience/">
-        Oulu Center Vision</a>
+          Toista kertaa Oulussa, 2021-2025 luottamustehtävässä kaupungin<br/>
+          tasa-arvo- ja yhdenvertaisuustoimikunnan varapuheenjohtajana.
         </p>
 
         <p>
-        Hiukkavaara: <a href="http://hiukkavaara3d.ouka.fi/">Vanha Hiukkavaara</a>
+          <ul>
+            <li><a href="vaalit2025/index.html">Kuntavaalit 2025</a> kirjoituksia (blog)</li>
+          </ul>
         </p>
+  
+        <h2>Muuta:</h2>
 
-        <p>
-        <a href="http://www.playsign.net/view-the-future-nordic-built-cities-in-playsign/">
-        Nordic Built Cities</a><br/>
-        Challenge 2016 Winners
-        </p>
-
-        <h2>an</h2>
         <p>
         <a href="gatherers/">gatherers</a> simulation is LIVE here,<br>
         code in <a href="https://github.com/antont/gatherers">github.com/antont/gatherers</a>
@@ -57,16 +78,17 @@
 
         <iframe width="560" height="315" src="https://www.youtube.com/embed/n7ywYXcFS1M?si=evhUzSWwGsvpQugX" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
 
-        <p>
-        .. what is more,
-        </p>
-    </center>
-    </div>
 
-    <div style="width: 25%;">
-        <iframe allowfullscreen sandbox="allow-top-navigation allow-scripts" width="400" height="800" src="https://maplefeed.bihlink.com/apiv2/feed?userurl=https%3A%2F%2Fmastodon.online%2Fusers%2Fantont&theme=modern-light&size=100&header=false&replies=true&boosts=true"></iframe>
+        <p>
+          was: an-<a href="index-publish.html">publishing</a>
+        </p>
+  
     </div>
 
     <div style="clear: both;"></div>
+
+    <div style="width: 5%;">
+    </div>
+
     </body>
 </html>
